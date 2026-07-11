@@ -2,15 +2,12 @@ namespace StockManagement.Domain.ValueObjects;
 
 public class EAN13
 {
-    public string Value { get; private set; }
+    public string Value { get; }
 
     public EAN13(string value)
     {
-        if (!IsValidEAN13(value))
-        {
-            throw new ArgumentException($"'{value}' n'est pas un EAN-13 valide.");
-            throw new ArgumentException($"'{value}' n'est pas un EAN-13 valide.");
-        }
+        if (!IsValid(value))
+            throw new ArgumentException($"'{value}' is not a valid EAN-13 code.");
         Value = value;
     }
 
@@ -33,5 +30,4 @@ public class EAN13
         obj is EAN13 other && Value == other.Value;
 
     public override int GetHashCode() => Value.GetHashCode();
-}
 }

@@ -1,8 +1,8 @@
 ﻿namespace StockManagement.Domain.Enums;
 
-public enum PackagingLevel
+public enum SaleType
 {
-    New,
-    Refurbished,
-    Unsellable
+    OnSite,
+    Takeaway,
+    Both
 }
