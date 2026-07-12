@@ -48,6 +48,43 @@ export async function createNonFoodArticle(
   await handleResponse(response);
 }
 
+export interface UpdateFoodArticlePayload {
+  name: string;
+  priceExcludingTax: number;
+  expiryDate: string;
+  saleType: SaleType;
+}
+
+export interface UpdateNonFoodArticlePayload {
+  name: string;
+  priceExcludingTax: number;
+  packagingLevel: PackagingLevel;
+}
+
+export async function updateFoodArticle(
+  id: string,
+  payload: UpdateFoodArticlePayload
+): Promise<void> {
+  const response = await fetch(`${ARTICLES_URL}/food/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  await handleResponse(response);
+}
+
+export async function updateNonFoodArticle(
+  id: string,
+  payload: UpdateNonFoodArticlePayload
+): Promise<void> {
+  const response = await fetch(`${ARTICLES_URL}/non-food/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  await handleResponse(response);
+}
+
 export async function deleteArticle(id: string): Promise<void> {
   const response = await fetch(`${ARTICLES_URL}/${id}`, {
     method: "DELETE",
