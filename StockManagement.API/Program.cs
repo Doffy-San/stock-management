@@ -32,6 +32,9 @@ builder.Services.AddCors(options =>
 
 WebApplication app = builder.Build();
 
+app.UseMiddleware<StockManagement.API.Middleware.ExceptionHandlingMiddleware>();
+
+
 // Apply migrations automatically on startup
 using (IServiceScope scope = app.Services.CreateScope())
 {
