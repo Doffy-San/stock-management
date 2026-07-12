@@ -1,0 +1,27 @@
+﻿using StockManagement.Domain.Entities;
+using StockManagement.Domain.Repositories;
+
+namespace StockManagement.Application.UseCases.Stock;
+
+public class GetStockHistoryUseCase
+{
+    private readonly IArticleRepository _articleRepository;
+    private readonly IStockMovementRepository _stockMovementRepository;
+
+    public GetStockHistoryUseCase(
+        IArticleRepository articleRepository,
+        IStockMovementRepository stockMovementRepository)
+    {
+        _articleRepository = articleRepository;
+        _stockMovementRepository = stockMovementRepository;
+    }
+
+    public async Task<IEnumerable<StockMovement>> ExecuteAsync(Guid articleId)
+    {
+        Article? article = await _articleRepository.GetByIdAsync(articleId);
+        if (article == null)
+            throw new InvalidOperationException($"Article with id '{articleId}' not found.");
+
+        return await _stockMovementRepository.GetByArticleIdAsync(articleId);
+    }
+}
