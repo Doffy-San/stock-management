@@ -3,6 +3,7 @@ import { ArticleCard } from "./ArticleCard";
 
 interface ArticleListProps {
   articles: Article[];
+  onEdit: (article: Article) => void;
   onDelete: (id: string) => void;
   onSupply: (article: Article) => void;
   onInventory: (article: Article) => void;
@@ -11,6 +12,7 @@ interface ArticleListProps {
 
 export function ArticleList({
   articles,
+  onEdit,
   onDelete,
   onSupply,
   onInventory,
@@ -30,6 +32,7 @@ export function ArticleList({
         <ArticleCard
           key={article.id}
           article={article}
+          onEdit={onEdit}
           onDelete={onDelete}
           onSupply={onSupply}
           onInventory={onInventory}

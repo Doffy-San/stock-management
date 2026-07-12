@@ -1,5 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace StockManagement.Application.DTOs;
 
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "articleType")]
+[JsonDerivedType(typeof(FoodArticleDto), "Food")]
+[JsonDerivedType(typeof(NonFoodArticleDto), "NonFood")]
 public class ArticleDto
 {
     public Guid Id { get; init; }
