@@ -23,7 +23,7 @@ public class FoodArticle : Article
     }
 
     // Required by EF Core
-    private FoodArticle() : base(null!, null!, null!) { }
+    private FoodArticle() : base() { }
 
     public static FoodArticle Create(
         EAN13 reference,

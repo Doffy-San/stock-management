@@ -19,7 +19,7 @@ public class NonFoodArticle : Article
     }
 
     // Required by EF Core
-    private NonFoodArticle() : base(null!, null!, null!) { }
+    private NonFoodArticle() : base() { }
 
     public static NonFoodArticle Create(
         EAN13 reference,

@@ -4,27 +4,32 @@ using StockManagement.Domain.Enums;
 namespace StockManagement.Domain.Entities;
 
 public abstract class Article
-	{
-        public Guid Id { get; protected set; }
-        public EAN13 Reference { get; protected set; }
-		public string Name { get; protected set; }
-		public Price Price { get; protected set; }
+{
+    public Guid Id { get; protected set; }
+    public EAN13 Reference { get; protected set; } = null!;
+    public string Name { get; protected set; } = null!;
+    public Price Price { get; protected set; } = null!;
 
-		private readonly List<StockMovement> _movements = new();
-		public IReadOnlyCollection<StockMovement> Movements => _movements.AsReadOnly();
+    private readonly List<StockMovement> _movements = new();
+    public IReadOnlyCollection<StockMovement> Movements => _movements.AsReadOnly();
 
-		protected Article(EAN13 reference, string name, Price price)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Article name cannot be empty.");
+    protected Article(EAN13 reference, string name, Price price)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Article name cannot be empty.");
 
-			Id = Guid.NewGuid();
-            Reference = reference;
-			Name = name;
-			Price = price;
-		}
-		public int GetCurrentStock()
-		{
+        Id = Guid.NewGuid();
+        Reference = reference;
+        Name = name;
+        Price = price;
+    }
+
+    protected Article()
+    {
+    }
+
+    public int GetCurrentStock()
+    {
         StockMovement? lastInventory = _movements
             .Where(m => m.Type == MovementType.Inventory)
             .OrderByDescending(m => m.Date)
