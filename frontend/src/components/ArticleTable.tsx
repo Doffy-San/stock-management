@@ -2,10 +2,17 @@ import { useNavigate } from "react-router-dom";
 import type { Article, FoodArticle, NonFoodArticle } from "../types/article";
 import { useSortableData } from "../hooks/useSortableData";
 import { saleTypeLabels, packagingLevelLabels } from "../utils/labels";
-import { formatDate, formatPrice, formatQuantity,isExpired, isExpiringSoon } from "../utils/formatters";
+import {
+  formatDate,
+  formatPrice,
+  formatQuantity,
+  isExpired,
+  isExpiringSoon,
+} from "../utils/formatters";
 import { Badge } from "./ui/Badge";
 import {
   PackagePlus,
+  PackageMinus,
   ClipboardList,
   History,
   Pencil,
@@ -21,6 +28,7 @@ interface ArticleTableProps {
   onDelete: (id: string) => void;
   onSupply: (article: Article) => void;
   onInventory: (article: Article) => void;
+  onRelease: (article: Article) => void;
 }
 
 function isFoodArticle(article: Article): article is FoodArticle {
@@ -47,11 +55,12 @@ export function ArticleTable({
   onDelete,
   onSupply,
   onInventory,
+  onRelease,
 }: ArticleTableProps) {
   const navigate = useNavigate();
   const { sortedItems, requestSort, sortConfig } = useSortableData<Article>(
     articles,
-    "name"
+    "name",
   );
 
   const renderSortIcon = (key: keyof Article) => {
@@ -85,16 +94,28 @@ export function ArticleTable({
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className={sortableHeader} onClick={() => requestSort("name")}>
+              <th
+                className={sortableHeader}
+                onClick={() => requestSort("name")}
+              >
                 Article {renderSortIcon("name")}
               </th>
-              <th className={sortableHeader} onClick={() => requestSort("articleType")}>
+              <th
+                className={sortableHeader}
+                onClick={() => requestSort("articleType")}
+              >
                 Type {renderSortIcon("articleType")}
               </th>
-              <th className={sortableHeader} onClick={() => requestSort("priceIncludingTax")}>
+              <th
+                className={sortableHeader}
+                onClick={() => requestSort("priceIncludingTax")}
+              >
                 Prix TTC {renderSortIcon("priceIncludingTax")}
               </th>
-              <th className={sortableHeader} onClick={() => requestSort("currentStock")}>
+              <th
+                className={sortableHeader}
+                onClick={() => requestSort("currentStock")}
+              >
                 Stock {renderSortIcon("currentStock")}
               </th>
               <th className={staticHeader}>Détails</th>
@@ -104,39 +125,61 @@ export function ArticleTable({
           <tbody className="divide-y divide-gray-100">
             {sortedItems.map((article) => {
               const outOfStock = article.currentStock <= 0;
-              const lowStock = article.currentStock > 0 && article.currentStock < 10;
-              const expired = isFoodArticle(article) && isExpired(article.expiryDate);
-              const expiringSoon = isFoodArticle(article) && isExpiringSoon(article.expiryDate);
+              const lowStock =
+                article.currentStock > 0 && article.currentStock < 10;
+              const expired =
+                isFoodArticle(article) && isExpired(article.expiryDate);
+              const expiringSoon =
+                isFoodArticle(article) && isExpiringSoon(article.expiryDate);
 
               const rowClass = expired
                 ? "bg-red-50"
                 : outOfStock
-                ? "bg-orange-50"
-                : "hover:bg-gray-50";
+                  ? "bg-orange-50"
+                  : "hover:bg-gray-50";
 
-              const stockColor = outOfStock ? "red" : lowStock ? "orange" : "green";
+              const stockColor = outOfStock
+                ? "red"
+                : lowStock
+                  ? "orange"
+                  : "green";
 
               return (
                 <tr key={article.id} className={`${rowClass} transition`}>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">{article.name}</div>
-                    <div className="text-xs text-gray-500">{article.reference}</div>
+                    <div className="font-medium text-gray-900">
+                      {article.name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {article.reference}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <Badge
-                      label={article.articleType === "Food" ? "Alimentaire" : "Non alim."}
+                      label={
+                        article.articleType === "Food"
+                          ? "Alimentaire"
+                          : "Non alim."
+                      }
                       color={article.articleType === "Food" ? "blue" : "orange"}
                     />
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-700">
                     <div>{formatPrice(article.priceIncludingTax)}</div>
                     <div className="text-xs text-gray-400">
-                      HT {formatPrice(article.priceExcludingTax)} · {article.vatRate}%
+                      HT {formatPrice(article.priceExcludingTax)} ·{" "}
+                      {article.vatRate}%
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Badge label={formatQuantity(article.currentStock, article.unit)} color={stockColor} />
+                      <Badge
+                        label={formatQuantity(
+                          article.currentStock,
+                          article.unit,
+                        )}
+                        color={stockColor}
+                      />
                       {outOfStock && (
                         <span className="flex items-center gap-1 text-xs text-red-600 font-medium">
                           <AlertTriangle size={14} /> Rupture
@@ -145,7 +188,15 @@ export function ArticleTable({
                     </div>
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-600">
-                    <span className={expired ? "text-red-600 font-medium" : expiringSoon ? "text-orange-600" : ""}>
+                    <span
+                      className={
+                        expired
+                          ? "text-red-600 font-medium"
+                          : expiringSoon
+                            ? "text-orange-600"
+                            : ""
+                      }
+                    >
                       {getArticleDetail(article)}
                     </span>
                   </td>
@@ -158,13 +209,21 @@ export function ArticleTable({
                         <PackagePlus size={14} /> Approvisionner
                       </button>
                       <button
+                        onClick={() => onRelease(article)}
+                        className={`${actionButton} text-orange-700 hover:bg-orange-50`}
+                      >
+                        <PackageMinus size={14} /> Sortie
+                      </button>
+                      <button
                         onClick={() => onInventory(article)}
                         className={`${actionButton} text-gray-700 hover:bg-gray-100`}
                       >
                         <ClipboardList size={14} /> Inventaire
                       </button>
                       <button
-                        onClick={() => navigate(`/articles/${article.id}/history`)}
+                        onClick={() =>
+                          navigate(`/articles/${article.id}/history`)
+                        }
                         className={`${actionButton} text-gray-700 hover:bg-gray-100`}
                       >
                         <History size={14} /> Historique

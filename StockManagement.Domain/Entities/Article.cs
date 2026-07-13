@@ -45,11 +45,19 @@ public abstract class Article
             .Where(m => m.Type == MovementType.Supply && m.Date > baseDate)
             .Sum(m => m.Quantity);
 
-        int sold = _movements
-            .Where(m => m.Type == MovementType.Sale && m.Date > baseDate)
+        int released = _movements
+            .Where(m => IsStockRelease(m.Type) && m.Date > baseDate)
             .Sum(m => m.Quantity);
 
-        return baseQuantity + supplied - sold;
+        int stock = baseQuantity + supplied - released;
+        return Math.Max(0, stock);
+    }
+
+    private static bool IsStockRelease(MovementType type)
+    {
+        return type == MovementType.Sale
+            || type == MovementType.Loss
+            || type == MovementType.Expiry;
     }
 
     public void AddMovement(StockMovement movement)

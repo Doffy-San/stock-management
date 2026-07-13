@@ -1,4 +1,4 @@
-export type MovementType = "Supply" | "Sale" | "Inventory";
+export type MovementType = "Supply" | "Sale" | "Loss" | "Expiry" | "Inventory";
 
 export interface StockMovement {
   id: string;
@@ -8,3 +8,6 @@ export interface StockMovement {
   date: string;
   comment: string | null;
 }
+
+// Motifs de sortie de stock (sous-ensemble de MovementType)
+export type ReleaseReason = "Sale" | "Loss" | "Expiry";

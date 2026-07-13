@@ -10,9 +10,11 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { ArrowLeft } from "lucide-react";
 
-const movementColors: Record<string, "green" | "red" | "blue"> = {
+const movementColors: Record<string, "green" | "red" | "blue" | "orange"> = {
   Supply: "green",
   Sale: "red",
+  Loss: "orange",
+  Expiry: "orange",
   Inventory: "blue",
 };
 

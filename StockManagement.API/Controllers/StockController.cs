@@ -34,6 +34,13 @@ public class StockController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("release/{articleId:guid}")]
+    public async Task<IActionResult> Release(Guid articleId, [FromBody] ReleaseStockRequest request)
+    {
+        await _addStockMovement.ReleaseAsync(articleId, request.Type, request.Quantity, request.Comment);
+        return NoContent();
+    }
+
     [HttpGet("history/{articleId:guid}")]
     public async Task<ActionResult<IEnumerable<StockMovementDto>>> GetHistory(Guid articleId)
     {
