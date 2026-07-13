@@ -4,7 +4,7 @@ import type { MovementType, ReleaseReason  } from "../types/stock";
 export const saleTypeLabels: Record<SaleType, string> = {
   OnSite: "Sur place",
   Takeaway: "À emporter",
-  Both: "Les deux",
+  Both: "Sur place + À emporter",
 };
 
 export const packagingLevelLabels: Record<PackagingLevel, string> = {
