@@ -13,7 +13,7 @@ import {
   updateFoodArticle,
   updateNonFoodArticle,
 } from "../api/articleApi";
-import { saleTypeLabels, packagingLevelLabels } from "../utils/label";
+import { saleTypeLabels, packagingLevelLabels } from "../utils/labels";
 import { Button } from "./ui/Button";
 
 interface ArticleFormProps {

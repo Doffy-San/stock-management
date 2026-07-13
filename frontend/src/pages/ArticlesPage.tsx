@@ -2,10 +2,9 @@ import { useState } from "react";
 import type { Article } from "../types/article";
 import { useArticles } from "../hooks/useArticles";
 import { deleteArticle } from "../api/articleApi";
-import { ArticleList } from "../components/ArticleList";
+import { ArticleTable } from "../components/ArticleTable";
 import { ArticleForm } from "../components/ArticleForm";
 import { StockMovementForm } from "../components/StockMovementForm";
-import { StockHistory } from "../components/StockHistory";
 import { Modal } from "../components/ui/Modal";
 import { Button } from "../components/ui/Button";
 
@@ -14,8 +13,7 @@ type ModalState =
   | { type: "create" }
   | { type: "edit"; article: Article }
   | { type: "supply"; article: Article }
-  | { type: "inventory"; article: Article }
-  | { type: "history"; article: Article };
+  | { type: "inventory"; article: Article };
 
 export function ArticlesPage() {
   const { articles, isLoading, error, refresh } = useArticles();
@@ -34,9 +32,7 @@ export function ArticlesPage() {
       await deleteArticle(id);
       await refresh();
     } catch (err) {
-      alert(
-        err instanceof Error ? err.message : "Erreur lors de la suppression.",
-      );
+      alert(err instanceof Error ? err.message : "Erreur lors de la suppression.");
     }
   };
 
@@ -45,39 +41,31 @@ export function ArticlesPage() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              Gestion de stocks
-            </h1>
+            <h1 className="text-xl font-bold text-gray-900">Gestion de stocks</h1>
             <p className="text-sm text-gray-500">Back office — Billet Réduc</p>
           </div>
-          <Button
-            variant="primary"
-            onClick={() => setModal({ type: "create" })}
-          >
+          <Button variant="primary" onClick={() => setModal({ type: "create" })}>
             + Nouvel article
           </Button>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
-        {isLoading && (
-          <p className="text-center text-gray-500 py-8">Chargement...</p>
-        )}
+        {isLoading && <p className="text-center text-gray-500 py-8">Chargement...</p>}
 
         {error && (
-          <div className="bg-red-100 text-red-800 p-3 rounded mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-md mb-4">
             {error}
           </div>
         )}
 
         {!isLoading && !error && (
-          <ArticleList
+          <ArticleTable
             articles={articles}
             onEdit={(article) => setModal({ type: "edit", article })}
             onDelete={handleDelete}
             onSupply={(article) => setModal({ type: "supply", article })}
             onInventory={(article) => setModal({ type: "inventory", article })}
-            onViewHistory={(article) => setModal({ type: "history", article })}
           />
         )}
       </main>
@@ -131,16 +119,6 @@ export function ArticlesPage() {
             onSuccess={handleSuccess}
             onCancel={closeModal}
           />
-        )}
-      </Modal>
-
-      <Modal
-        isOpen={modal.type === "history"}
-        title="Historique des mouvements"
-        onClose={closeModal}
-      >
-        {modal.type === "history" && (
-          <StockHistory articleId={modal.article.id} />
         )}
       </Modal>
     </div>
