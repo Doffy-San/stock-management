@@ -1,0 +1,11 @@
+{
+  "name": "stock-management",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c blue,green \"dotnet run --project StockManagement.API --launch-profile https\" \"npm --prefix frontend run dev\"",
+    "install:all": "npm install && npm --prefix frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
