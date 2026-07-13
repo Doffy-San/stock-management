@@ -1,3 +1,6 @@
+import type { UnitOfMeasure } from "../types/article";
+import { unitSymbols } from "./labels";
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
@@ -8,6 +11,10 @@ export function formatDate(dateString: string): string {
 
 export function formatPrice(value: number): string {
   return `${value.toFixed(2)} €`;
+}
+
+export function formatQuantity(quantity: number, unit: UnitOfMeasure): string {
+  return `${quantity} ${unitSymbols[unit]}`;
 }
 
 export function isExpired(dateString: string): boolean {

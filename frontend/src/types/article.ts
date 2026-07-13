@@ -4,6 +4,8 @@ export type SaleType = "OnSite" | "Takeaway" | "Both";
 
 export type PackagingLevel = "New" | "Refurbished" | "Unsellable";
 
+export type UnitOfMeasure = "Piece" | "Kilogram" | "Liter";
+
 export interface Article {
   id: string;
   reference: string;
@@ -12,6 +14,7 @@ export interface Article {
   priceIncludingTax: number;
   vatRate: number;
   articleType: ArticleType;
+  unit: UnitOfMeasure;
   currentStock: number;
 }
 

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { Article } from "../types/article";
 import { supplyStock, recordInventory } from "../api/stockApi";
+import { unitSymbols } from "../utils/labels";
+import { formatQuantity } from "../utils/formatters";
 import { Button } from "./ui/Button";
 
 type MovementMode = "supply" | "inventory";
@@ -62,7 +64,9 @@ export function StockMovementForm({
         Article : <span className="font-medium text-gray-900">{article.name}</span>
         <br />
         Stock actuel :{" "}
-        <span className="font-medium text-gray-900">{article.currentStock}</span>
+        <span className="font-medium text-gray-900">
+          {formatQuantity(article.currentStock, article.unit)}
+        </span>
       </div>
 
       {error && (
@@ -75,21 +79,30 @@ export function StockMovementForm({
         <label className={labelClass}>
           {mode === "supply" ? "Quantité à ajouter" : "Quantité comptée"}
         </label>
-        <input
-          className={inputClass}
-          type="number"
-          min="1"
-          placeholder="0"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-        />
+        <div className="flex items-center gap-2">
+          <input
+            className={`${inputClass} flex-1`}
+            type="number"
+            min="1"
+            placeholder="0"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+          />
+          <span className="text-sm font-medium text-gray-500 whitespace-nowrap">
+            {unitSymbols[article.unit]}
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-col">
         <label className={labelClass}>Commentaire (optionnel)</label>
         <input
           className={inputClass}
-          placeholder="Ex : Livraison du fournisseur X"
+          placeholder={
+            mode === "supply"
+              ? "Ex : Livraison du fournisseur X"
+              : "Ex : Comptage mensuel"
+          }
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />

@@ -6,6 +6,7 @@ import type {
   ArticleType,
   SaleType,
   PackagingLevel,
+  UnitOfMeasure,
 } from "../types/article";
 import {
   createFoodArticle,
@@ -13,7 +14,7 @@ import {
   updateFoodArticle,
   updateNonFoodArticle,
 } from "../api/articleApi";
-import { saleTypeLabels, packagingLevelLabels } from "../utils/labels";
+import { saleTypeLabels, packagingLevelLabels, unitLabels } from "../utils/labels";
 import { Button } from "./ui/Button";
 
 interface ArticleFormProps {
@@ -24,6 +25,7 @@ interface ArticleFormProps {
 
 const SALE_TYPES: SaleType[] = ["OnSite", "Takeaway", "Both"];
 const PACKAGING_LEVELS: PackagingLevel[] = ["New", "Refurbished", "Unsellable"];
+const UNITS: UnitOfMeasure[] = ["Piece", "Kilogram", "Liter"];
 
 const inputClass =
   "border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition";
@@ -42,11 +44,19 @@ export function ArticleForm({ articleToEdit, onSuccess, onCancel }: ArticleFormP
       ? String(articleToEdit.priceExcludingTax)
       : ""
   );
-  const [expiryDate, setExpiryDate] = useState(
-    isEditMode && articleToEdit.articleType === "Food"
-      ? (articleToEdit as FoodArticle).expiryDate.split("T")[0]
-      : ""
-  );
+  const [unit, setUnit] = useState<UnitOfMeasure>(articleToEdit?.unit ?? "Piece");
+  const [expiryDate, setExpiryDate] = useState(() => {
+    if (isEditMode && articleToEdit.articleType === "Food") {
+      const food = articleToEdit as FoodArticle;
+      if (food.expiryDate) {
+        const date = new Date(food.expiryDate);
+        if (!isNaN(date.getTime())) {
+          return date.toISOString().split("T")[0];
+        }
+      }
+    }
+    return "";
+  });
   const [saleType, setSaleType] = useState<SaleType>(
     isEditMode && articleToEdit.articleType === "Food"
       ? (articleToEdit as FoodArticle).saleType
@@ -67,6 +77,9 @@ export function ArticleForm({ articleToEdit, onSuccess, onCancel }: ArticleFormP
     }
     if (!isEditMode && !reference.trim()) {
       return "La référence EAN-13 est obligatoire.";
+    }
+    if (!isEditMode && !/^\d{13}$/.test(reference.trim())) {
+      return "La référence doit contenir exactement 13 chiffres.";
     }
     const price = parseFloat(priceExcludingTax);
     if (isNaN(price) || price < 0) {
@@ -110,6 +123,7 @@ export function ArticleForm({ articleToEdit, onSuccess, onCancel }: ArticleFormP
             reference,
             name,
             priceExcludingTax: price,
+            unit,
             expiryDate: new Date(expiryDate).toISOString(),
             saleType,
           });
@@ -126,6 +140,7 @@ export function ArticleForm({ articleToEdit, onSuccess, onCancel }: ArticleFormP
             reference,
             name,
             priceExcludingTax: price,
+            unit,
             packagingLevel,
           });
         }
@@ -203,6 +218,23 @@ export function ArticleForm({ articleToEdit, onSuccess, onCancel }: ArticleFormP
           onChange={(e) => setPriceExcludingTax(e.target.value)}
         />
       </div>
+
+      {!isEditMode && (
+        <div className="flex flex-col">
+          <label className={labelClass}>Unité de mesure du stock</label>
+          <select
+            className={inputClass}
+            value={unit}
+            onChange={(e) => setUnit(e.target.value as UnitOfMeasure)}
+          >
+            {UNITS.map((u) => (
+              <option key={u} value={u}>
+                {unitLabels[u]}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {articleType === "Food" && (
         <>

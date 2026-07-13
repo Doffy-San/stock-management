@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { StockMovement } from "../types/stock";
+import type { Article } from "../types/article";
 import { getStockHistory } from "../api/stockApi";
+import { getArticles } from "../api/articleApi";
 import { movementTypeLabels } from "../utils/labels";
-import { formatDate } from "../utils/formatters";
+import { formatDate, formatQuantity } from "../utils/formatters";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { ArrowLeft } from "lucide-react";
@@ -19,24 +21,29 @@ export function StockHistoryPage() {
   const navigate = useNavigate();
 
   const [movements, setMovements] = useState<StockMovement[]>([]);
+  const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    async function loadHistory() {
+    async function loadData() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await getStockHistory(id!);
-        setMovements(data);
+        const [history, articles] = await Promise.all([
+          getStockHistory(id!),
+          getArticles(),
+        ]);
+        setMovements(history);
+        setArticle(articles.find((a) => a.id === id) ?? null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur de chargement.");
       } finally {
         setIsLoading(false);
       }
     }
-    loadHistory();
+    loadData();
   }, [id]);
 
   return (
@@ -49,8 +56,12 @@ export function StockHistoryPage() {
             </span>
           </Button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Historique des mouvements</h1>
-            <p className="text-sm text-gray-500">Entrées, sorties et inventaires</p>
+            <h1 className="text-xl font-bold text-gray-900">
+              Historique des mouvements
+            </h1>
+            <p className="text-sm text-gray-500">
+              {article ? article.name : "Entrées, sorties et inventaires"}
+            </p>
           </div>
         </div>
       </header>
@@ -72,37 +83,41 @@ export function StockHistoryPage() {
 
         {!isLoading && !error && movements.length > 0 && (
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Commentaire</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {movements.map((movement) => (
-                  <tr key={movement.id} className="hover:bg-gray-50 transition">
-                    <td className="px-4 py-3">
-                      <Badge
-                        label={movementTypeLabels[movement.type]}
-                        color={movementColors[movement.type] ?? "blue"}
-                      />
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                      {movement.quantity}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {formatDate(movement.date)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {movement.comment ?? "—"}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Commentaire</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {movements.map((movement) => (
+                    <tr key={movement.id} className="hover:bg-gray-50 transition">
+                      <td className="px-4 py-3">
+                        <Badge
+                          label={movementTypeLabels[movement.type]}
+                          color={movementColors[movement.type] ?? "blue"}
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        {article
+                          ? formatQuantity(movement.quantity, article.unit)
+                          : movement.quantity}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {formatDate(movement.date)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">
+                        {movement.comment ?? "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </main>

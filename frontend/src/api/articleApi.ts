@@ -1,6 +1,5 @@
 import { API_BASE_URL } from "./config";
-import type { Article } from "../types/article";
-import type { SaleType, PackagingLevel } from "../types/article";
+import type { SaleType, PackagingLevel, UnitOfMeasure, Article } from "../types/article";
 import { handleResponse } from "./httpClient";
 
 const ARTICLES_URL = `${API_BASE_URL}/articles`;
@@ -9,6 +8,7 @@ export interface CreateFoodArticlePayload {
   reference: string;
   name: string;
   priceExcludingTax: number;
+  unit: UnitOfMeasure;
   expiryDate: string;
   saleType: SaleType;
 }
@@ -17,6 +17,7 @@ export interface CreateNonFoodArticlePayload {
   reference: string;
   name: string;
   priceExcludingTax: number;
+  unit: UnitOfMeasure;
   packagingLevel: PackagingLevel;
 }
 

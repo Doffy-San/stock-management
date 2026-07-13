@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import type { Article, FoodArticle, NonFoodArticle } from "../types/article";
 import { useSortableData } from "../hooks/useSortableData";
 import { saleTypeLabels, packagingLevelLabels } from "../utils/labels";
-import { formatDate, formatPrice, isExpired, isExpiringSoon } from "../utils/formatters";
+import { formatDate, formatPrice, formatQuantity,isExpired, isExpiringSoon } from "../utils/formatters";
 import { Badge } from "./ui/Badge";
 import {
   PackagePlus,
@@ -136,7 +136,7 @@ export function ArticleTable({
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Badge label={`${article.currentStock}`} color={stockColor} />
+                      <Badge label={formatQuantity(article.currentStock, article.unit)} color={stockColor} />
                       {outOfStock && (
                         <span className="flex items-center gap-1 text-xs text-red-600 font-medium">
                           <AlertTriangle size={14} /> Rupture
