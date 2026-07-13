@@ -292,8 +292,8 @@ Réflexions menées pendant le développement, non implémentées volontairement
 
 - **Saisie en masse** — approvisionnement ou inventaire de plusieurs articles simultanément (sélection multiple, endpoint batch, gestion des erreurs partielles).
 - **Tableau de bord (KPIs)** — total d'articles, ruptures, valeur totale du stock en euros. La fréquence de rotation nécessiterait un historique de ventes sur une période.
-- **Tags de vente cumulables** — modéliser « sur place » et « à emporter » comme deux caractéristiques cumulables plutôt qu'un enum à trois valeurs, ce qui impliquerait une double TVA selon le canal de vente.
 - **Stock prévisionnel** — distinct du stock disponible, il intégrerait les commandes fournisseurs attendues et les commandes clients à honorer. Essentiel dans un usage métier réel, mais nécessite un système de commandes hors périmètre.
+- **Authentification et autorisation** — sécuriser l'accès au back office via une authentification (JWT) et une gestion des rôles (par exemple gestionnaire et administrateur), avec protection des endpoints côté API. Non implémentée car hors du périmètre de l'énoncé, mais indispensable pour un déploiement réel.
 - **Enrichissement produit** — association de l'EAN-13 à un produit réel via une API externe (Open Food Facts, GS1).
 - **CI/CD** — la structure monorepo est prête pour des workflows GitHub Actions séparés backend/frontend.
 - **Tests unitaires** — le domaine étant pur (sans dépendance), il se prête particulièrement bien à des tests sur le calcul de stock, la validation EAN-13 et le calcul de TVA.
