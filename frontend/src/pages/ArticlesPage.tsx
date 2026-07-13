@@ -6,10 +6,11 @@ import { deleteArticle } from "../api/articleApi";
 import { ArticleTable } from "../components/ArticleTable";
 import { ArticleForm } from "../components/ArticleForm";
 import { StockMovementForm } from "../components/StockMovementForm";
-import  { StockReleaseForm } from "../components/StockReleaseForm";
+import { StockReleaseForm } from "../components/StockReleaseForm";
 import { ArticleFilters } from "../components/ArticleFilters";
 import { Modal } from "../components/ui/Modal";
 import { Button } from "../components/ui/Button";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 
 type ModalState =
   | { type: "none" }
@@ -22,15 +23,18 @@ type ModalState =
 export function ArticlesPage() {
   const { articles, isLoading, error, refresh } = useArticles();
   const {
-  filteredArticles,
-  search,
-  setSearch,
-  typeFilter,
-  setTypeFilter,
-  statusFilter,
-  setStatusFilter,
-} = useArticleFilters(articles);
+    filteredArticles,
+    search,
+    setSearch,
+    typeFilter,
+    setTypeFilter,
+    statusFilter,
+    setStatusFilter,
+  } = useArticleFilters(articles);
   const [modal, setModal] = useState<ModalState>({ type: "none" });
+
+  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const closeModal = () => setModal({ type: "none" });
 
@@ -39,15 +43,24 @@ export function ArticlesPage() {
     await refresh();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Supprimer cet article ?")) return;
+  const handleDeleteRequest = (id: string) => {
+    const article = articles.find((a) => a.id === id) ?? null;
+    setArticleToDelete(article);
+  };
+
+  const confirmDelete = async () => {
+    if (!articleToDelete) return;
+    setIsDeleting(true);
     try {
-      await deleteArticle(id);
+      await deleteArticle(articleToDelete.id);
+      setArticleToDelete(null);
       await refresh();
     } catch (err) {
       alert(
         err instanceof Error ? err.message : "Erreur lors de la suppression.",
       );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -96,9 +109,11 @@ export function ArticlesPage() {
             <ArticleTable
               articles={filteredArticles}
               onEdit={(article) => setModal({ type: "edit", article })}
-              onDelete={handleDelete}
+              onDelete={handleDeleteRequest}
               onSupply={(article) => setModal({ type: "supply", article })}
-              onInventory={(article) => setModal({ type: "inventory", article })}
+              onInventory={(article) =>
+                setModal({ type: "inventory", article })
+              }
               onRelease={(article) => setModal({ type: "release", article })}
             />
           </>
@@ -170,6 +185,20 @@ export function ArticlesPage() {
           />
         )}
       </Modal>
+
+      <ConfirmDialog
+        isOpen={articleToDelete !== null}
+        title="Supprimer l'article"
+        message={
+          articleToDelete
+            ? `Voulez-vous vraiment supprimer « ${articleToDelete.name} » ? Cette action est irréversible et supprimera aussi son historique de mouvements.`
+            : ""
+        }
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        onCancel={() => setArticleToDelete(null)}
+        isProcessing={isDeleting}
+      />
     </div>
   );
 }
