@@ -236,8 +236,8 @@ npm run dev
 Depuis la racine du projet :
 
 ```bash
-# Restaurer les dépendances et lancer l'API
-dotnet run --project StockManagement.API
+# Restaurer les dépendances et lancer l'API (profil HTTPS)
+dotnet run --project StockManagement.API --launch-profile https
 ```
 
 L'API démarre sur `https://localhost:7042`.
