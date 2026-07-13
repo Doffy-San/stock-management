@@ -27,7 +27,8 @@ public static class ArticleMapper
         ArticleType = "Food",
         CurrentStock = article.GetCurrentStock(),
         ExpiryDate = article.ExpiryDate,
-        SaleType = article.SaleType.ToString()
+        SaleType = article.SaleType.ToString(),
+        Unit = article.Unit.ToString(),
     };
 
     private static NonFoodArticleDto MapNonFoodArticle(NonFoodArticle article) => new()
@@ -40,6 +41,7 @@ public static class ArticleMapper
         VatRate = article.Price.VatRate,
         ArticleType = "NonFood",
         CurrentStock = article.GetCurrentStock(),
-        PackagingLevel = article.PackagingLevel.ToString()
+        PackagingLevel = article.PackagingLevel.ToString(),
+        Unit = article.Unit.ToString(),
     };
 }

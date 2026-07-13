@@ -15,8 +15,9 @@ public class FoodArticle : Article
         EAN13 reference,
         string name,
         Price price,
+        UnitOfMeasure unit,
         DateTime expiryDate,
-        SaleType saleType) : base(reference, name, price)
+        SaleType saleType) : base(reference, name, price, unit)
     {
         ExpiryDate = expiryDate;
         SaleType = saleType;
@@ -29,6 +30,7 @@ public class FoodArticle : Article
         EAN13 reference,
         string name,
         decimal priceExcludingTax,
+        UnitOfMeasure unit,
         DateTime expiryDate,
         SaleType saleType)
     {
@@ -37,7 +39,7 @@ public class FoodArticle : Article
             : OnSiteVatRate;
 
         Price price = Price.Create(priceExcludingTax, vatRate);
-        return new FoodArticle(reference, name, price, expiryDate, saleType);
+        return new FoodArticle(reference, name, price, unit, expiryDate, saleType);
     }
 
     public void UpdateExpiryDate(DateTime expiryDate)

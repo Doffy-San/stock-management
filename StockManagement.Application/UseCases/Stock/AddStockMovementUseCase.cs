@@ -1,5 +1,6 @@
 ﻿using StockManagement.Domain.Entities;
 using StockManagement.Domain.Enums;
+using StockManagement.Domain.Exceptions;
 using StockManagement.Domain.Repositories;
 
 namespace StockManagement.Application.UseCases.Stock;
@@ -31,7 +32,7 @@ public class AddStockMovementUseCase
     {
         Article? article = await _articleRepository.GetByIdAsync(articleId);
         if (article == null)
-            throw new InvalidOperationException($"Article with id '{articleId}' not found.");
+            throw new NotFoundException($"Article with id '{articleId}' not found.");
 
         StockMovement movement = StockMovement.Create(articleId, type, quantity, comment);
         article.AddMovement(movement);

@@ -7,4 +7,5 @@ public record CreateFoodArticleRequest(
     string Name,
     decimal PriceExcludingTax,
     DateTime ExpiryDate,
-    SaleType SaleType);
+    SaleType SaleType,
+    UnitOfMeasure Unit);

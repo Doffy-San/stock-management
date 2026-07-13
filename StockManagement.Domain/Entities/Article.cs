@@ -10,10 +10,12 @@ public abstract class Article
     public string Name { get; protected set; } = null!;
     public Price Price { get; protected set; } = null!;
 
+    public UnitOfMeasure Unit { get; protected set; }
+
     private readonly List<StockMovement> _movements = new();
     public IReadOnlyCollection<StockMovement> Movements => _movements.AsReadOnly();
 
-    protected Article(EAN13 reference, string name, Price price)
+    protected Article(EAN13 reference, string name, Price price, UnitOfMeasure unit)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Article name cannot be empty.");
@@ -22,6 +24,7 @@ public abstract class Article
         Reference = reference;
         Name = name;
         Price = price;
+        Unit = unit;
     }
 
     protected Article()

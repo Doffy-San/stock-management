@@ -1,5 +1,6 @@
 ﻿using StockManagement.Domain.Entities;
 using StockManagement.Domain.Enums;
+using StockManagement.Domain.Exceptions;
 using StockManagement.Domain.Repositories;
 using StockManagement.Domain.ValueObjects;
 
@@ -23,7 +24,7 @@ public class UpdateFoodArticleUseCase
     {
         Article? article = await _articleRepository.GetByIdAsync(id);
         if (article == null)
-            throw new InvalidOperationException($"Article with id '{id}' not found.");
+            throw new NotFoundException($"Article with id '{id}' not found.");
 
         if (article is not FoodArticle foodArticle)
             throw new InvalidOperationException($"Article with id '{id}' is not a food article.");

@@ -44,7 +44,7 @@ app.UseMiddleware<StockManagement.API.Middleware.ExceptionHandlingMiddleware>();
 using (IServiceScope scope = app.Services.CreateScope())
 {
     StockDbContext dbContext = scope.ServiceProvider.GetRequiredService<StockDbContext>();
-    dbContext.Database.EnsureCreated();
+    dbContext.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())

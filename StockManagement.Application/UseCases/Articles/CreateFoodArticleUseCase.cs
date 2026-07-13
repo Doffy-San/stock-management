@@ -1,5 +1,6 @@
 using StockManagement.Domain.Entities;
 using StockManagement.Domain.Enums;
+using StockManagement.Domain.Exceptions;
 using StockManagement.Domain.Repositories;
 using StockManagement.Domain.ValueObjects;
 
@@ -18,6 +19,7 @@ public class CreateFoodArticleUseCase
         string reference,
         string name,
         decimal priceExcludingTax,
+        UnitOfMeasure unit,
         DateTime expiryDate,
         SaleType saleType)
     {
@@ -25,9 +27,9 @@ public class CreateFoodArticleUseCase
 
         Article? existing = await _articleRepository.GetByReferenceAsync(ean13);
         if (existing != null)
-            throw new InvalidOperationException($"An article with reference '{reference}' already exists.");
+            throw new DuplicateReferenceException(reference);
 
-        FoodArticle article = FoodArticle.Create(ean13, name, priceExcludingTax, expiryDate, saleType);
+        FoodArticle article = FoodArticle.Create(ean13, name, priceExcludingTax, unit, expiryDate, saleType);
 
         await _articleRepository.AddAsync(article);
     }

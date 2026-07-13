@@ -46,6 +46,7 @@ public class ArticlesController : ControllerBase
             request.Reference,
             request.Name,
             request.PriceExcludingTax,
+            request.Unit,
             request.ExpiryDate,
             request.SaleType);
 
@@ -59,6 +60,7 @@ public class ArticlesController : ControllerBase
             request.Reference,
             request.Name,
             request.PriceExcludingTax,
+            request.Unit,
             request.PackagingLevel);
 
         return Created();

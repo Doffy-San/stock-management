@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using StockManagement.Domain.Exceptions;
 
 namespace StockManagement.API.Middleware;
 
@@ -34,8 +35,9 @@ public class ExceptionHandlingMiddleware
 
         HttpStatusCode statusCode = exception switch
         {
+            NotFoundException => HttpStatusCode.NotFound,
+            DuplicateReferenceException => HttpStatusCode.Conflict,
             ArgumentException => HttpStatusCode.BadRequest,
-            InvalidOperationException => HttpStatusCode.Conflict,
             _ => HttpStatusCode.InternalServerError
         };
 

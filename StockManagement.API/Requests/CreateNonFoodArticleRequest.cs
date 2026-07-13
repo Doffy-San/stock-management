@@ -6,4 +6,5 @@ public record CreateNonFoodArticleRequest(
     string Reference,
     string Name,
     decimal PriceExcludingTax,
-    PackagingLevel PackagingLevel);
+    PackagingLevel PackagingLevel,
+    UnitOfMeasure Unit);

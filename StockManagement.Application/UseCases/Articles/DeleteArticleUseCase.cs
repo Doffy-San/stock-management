@@ -1,4 +1,5 @@
 ﻿using StockManagement.Domain.Entities;
+using StockManagement.Domain.Exceptions;
 using StockManagement.Domain.Repositories;
 
 namespace StockManagement.Application.UseCases.Articles;
@@ -14,7 +15,7 @@ public class DeleteArticleUseCase
     {
         Article? article = await _articleRepository.GetByIdAsync(id);
         if (article == null)
-            throw new InvalidOperationException($"Article with id '{id}' not found.");
+            throw new NotFoundException($"Article with id '{id}' not found.");
         await _articleRepository.DeleteAsync(id);
     }
 }

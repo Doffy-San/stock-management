@@ -14,5 +14,6 @@ public class ArticleDto
     public decimal PriceIncludingTax { get; init; }
     public decimal VatRate { get; init; }
     public string ArticleType { get; init; } = string.Empty;
+    public string Unit { get; init; } = string.Empty;
     public int CurrentStock { get; init; }
 }
